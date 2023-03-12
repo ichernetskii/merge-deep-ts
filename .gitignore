@@ -1,8 +1,9 @@
-.idea
 **/node_modules
+**/.DS_Store
+/.idea
 /dist
-.yarn/*
-!.yarn/releases
+/.yarn
+.yarnrc.yml
 .pnp.*
 yarn-error.log
-**/.DS_Store
+/.coverage
