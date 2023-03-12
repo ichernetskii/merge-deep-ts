@@ -1,0 +1,8 @@
+.idea
+**/node_modules
+/dist
+.yarn/*
+!.yarn/releases
+.pnp.*
+yarn-error.log
+**/.DS_Store
