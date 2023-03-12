@@ -1,18 +1,22 @@
 {
   "compilerOptions": {
+    // generation
+    "target": "ES2016",
+    "module": "ES6",
+    "moduleResolution": "NodeNext",
     "outDir": "dist",
     "declaration": true,
     "declarationDir": "dist",
-    "module": "ES2015",
-    "target": "ES2015",
-    "lib": ["ESNext"],
+    "types": ["node", "jest"],
+    // checks
     "strict": true,
-    "strictNullChecks": true,
-    "skipLibCheck": true,
-    "noImplicitAny": true,
-    "esModuleInterop": true,
-    "allowJs": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["src/**/*.spec.ts"]
+  "include": ["./src/**/*.ts"],
+  "exclude": ["./src/**/*.spec.ts"]
 }
