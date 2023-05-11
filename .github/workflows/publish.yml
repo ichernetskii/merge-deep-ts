@@ -15,6 +15,8 @@ jobs:
         run: yarn install --immutable && yarn run build
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       - name: Publish package on NPM 📦
         run: echo "npmAuthToken:" "\${NODE_AUTH_TOKEN}" >> ./.yarnrc.yml && yarn publish
         env:

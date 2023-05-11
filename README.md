@@ -17,7 +17,7 @@ yarn add deep-merge-ts
 
 Once the package is installed, you can import the library using import or require approach:
 
-```js
+```javascript
 import merge from "merge-deep-ts";
 ```
 
