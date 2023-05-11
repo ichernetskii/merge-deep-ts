@@ -2,7 +2,8 @@ import type { Config } from "jest";
 
 const config: Config = {
 	collectCoverage: true,
-	coverageReporters: ["text"],
+	coverageReporters: ["text", "lcov"],
+	reporters: [["jest-junit", { outputDirectory: "reports", outputName: "report.xml" }]],
 	testEnvironment: "node",
 	maxWorkers: 1,
 	moduleNameMapper: {

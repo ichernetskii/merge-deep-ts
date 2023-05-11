@@ -1,4 +1,11 @@
-# [Merge-Deep-TS](https://www.npmjs.com/package/merge-deep-ts) &middot; [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://img.shields.io/github/license/ichernetskii/merge-deep-ts) ![GitHub package.json version](https://img.shields.io/github/package-json/v/ichernetskii/merge-deep-ts) ![npm bundle size](https://img.shields.io/bundlephobia/minzip/merge-deep-ts) ![GitHub top language](https://img.shields.io/github/languages/top/ichernetskii/merge-deep-ts)
+# [Merge-Deep-TS](https://www.npmjs.com/package/merge-deep-ts)
+
+![GitHub package.json version](https://img.shields.io/github/package-json/v/ichernetskii/merge-deep-ts)
+![npm bundle size](https://img.shields.io/bundlephobia/minzip/merge-deep-ts)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/ichernetskii/merge-deep-ts/publish.yml)
+![Testspace pass ratio](https://img.shields.io/testspace/pass-ratio/ichernetskii/ichernetskii:merge-deep-ts/master?label=passed)
+[![Coverage Status](https://coveralls.io/repos/github/ichernetskii/merge-deep-ts/badge.svg?branch=ci)](https://coveralls.io/github/ichernetskii/merge-deep-ts?branch=ci)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://img.shields.io/github/license/ichernetskii/merge-deep-ts)
 
 Deep fast merge JavaScript objects with circular references handling and TypeScript support
 
@@ -17,7 +24,7 @@ yarn add deep-merge-ts
 
 Once the package is installed, you can import the library using import or require approach:
 
-```javascript
+```js
 import merge from "merge-deep-ts";
 ```
 
