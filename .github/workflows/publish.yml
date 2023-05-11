@@ -1,5 +1,7 @@
 name: Publish to NPM
-on: [push]
+on:
+  release:
+    types: [published]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -13,10 +15,18 @@ jobs:
           registry-url: "https://registry.npmjs.org"
       - name: Install dependencies and build 🔧
         run: yarn install --immutable && yarn run build
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v3
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      - name: Setup Testspace 🚀
+        uses: testspace-com/setup-testspace@v1
+        with:
+          domain: ${{ github.repository_owner }}
+      - name: Run tests ✅
+        run: yarn run test
+      - name: Push result to Testspace server
+        run: |
+          testspace ./reports/report.xml
+        if: always()
+      - name: Coveralls GitHub Action 📊
+        uses: coverallsapp/github-action@v1
       - name: Publish package on NPM 📦
         run: echo "npmAuthToken:" "\${NODE_AUTH_TOKEN}" >> ./.yarnrc.yml && yarn publish
         env:

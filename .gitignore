@@ -6,4 +6,5 @@
 .yarnrc.yml
 .pnp.*
 yarn-error.log
-/.coverage
+/coverage
+/reports

@@ -1,4 +1,11 @@
-# [Merge-Deep-TS](https://www.npmjs.com/package/merge-deep-ts) &middot; [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://img.shields.io/github/license/ichernetskii/merge-deep-ts) ![GitHub package.json version](https://img.shields.io/github/package-json/v/ichernetskii/merge-deep-ts) ![npm bundle size](https://img.shields.io/bundlephobia/minzip/merge-deep-ts) ![GitHub top language](https://img.shields.io/github/languages/top/ichernetskii/merge-deep-ts)
+# [Merge-Deep-TS](https://www.npmjs.com/package/merge-deep-ts)
+
+![GitHub package.json version](https://img.shields.io/github/package-json/v/ichernetskii/merge-deep-ts)
+![npm bundle size](https://img.shields.io/bundlephobia/minzip/merge-deep-ts)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/ichernetskii/merge-deep-ts/publish.yml)
+![Testspace pass ratio](https://img.shields.io/testspace/pass-ratio/ichernetskii/ichernetskii:merge-deep-ts/master?label=passed)
+[![Coverage Status](https://coveralls.io/repos/github/ichernetskii/merge-deep-ts/badge.svg?branch=ci)](https://coveralls.io/github/ichernetskii/merge-deep-ts?branch=ci)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://img.shields.io/github/license/ichernetskii/merge-deep-ts)
 
 Deep fast merge JavaScript objects with circular references handling and TypeScript support
 
@@ -17,7 +24,7 @@ yarn add deep-merge-ts
 
 Once the package is installed, you can import the library using import or require approach:
 
-```javascript
+```js
 import merge from "merge-deep-ts";
 ```
 
@@ -39,43 +46,49 @@ const merge = require("merge-deep-ts").default;
 
 ### *Objects*
 
-```js
-const user1 = {
-    name: "Alex",
-    position: "Developer",
-    age: 30,
-    location: {
-        country: "USA",
-        city: "New York",
+```typescript
+const bookInfo = {
+    title: "Harry Potter",
+    year: 1997,
+    price: {
+        value: 69,
+        currency: "USD"
     }
 };
 
-const user2 = {
-    position: "JS Developer",
-    age: 35,
-    location: {
-        city: "San Francisco",
-    },
+const bookDiscount = {
+    title: "Harry Potter and the Philosopher's Stone",
+    price: {
+        value: 49
+    }
 };
 
-const merged = merge([user1, user2]);
+const book = merge([bookInfo, bookDiscount]);
+
+// book: {
+//     title: string;
+//     year: number;
+//     price: {
+//         value: number;
+//         currency: string;
+//     };
+// };
 ```
 #### result:
 ```json5
 {
-  name: "Alex",
-  position: "JS Developer",
-  age: 35,
-  location: {
-    country: "USA",
-    city: "San Francisco"
+  title: "Harry Potter and the Philosopher's Stone",
+  year: 1997,
+  price: {
+    value: 49,
+    currency: "USD"
   }
 }
 ```
 
 ### *Arrays*
 
-```js
+```typescript
 const titles = [
     { title: "Harry Potter" },
     { title: "Lord of the Rings" }
@@ -92,6 +105,14 @@ const info = [
 ];
 
 const books = merge([titles, authors, info]);
+
+// books: Array<{
+//     title: string;
+//     author: string;
+//     birthYear: number;
+//     year: number;
+//     ISBN: string;
+// }>;
 ```
 
 #### result:
@@ -114,13 +135,13 @@ const books = merge([titles, authors, info]);
 
 ### *Maps*
 
-```js
+```typescript
 const phone = new Map([
     ["name", "iPhone"],
     ["model", "14"],
     ["price", { value: 999, currency: "USD" }],
 	["owners", [
-		{ name: "Alex", age: 30 }
+            { name: "Alex", age: 30 }
     ]]
 ]);
 
@@ -158,7 +179,7 @@ Map {
 
 ### *Sets*
 
-```js
+```typescript
 const set1 = new Set([1, 2, 3]);
 const set2 = new Set([2, 3, 4]);
 const mergedSet = merge([set1, set2]);
@@ -168,4 +189,70 @@ const mergedSet = merge([set1, set2]);
 
 ```
 Set { 1, 2, 3, 4 }
+```
+
+### *Circular references*
+
+```typescript
+const bookInfo = {
+    title: "Harry Potter",
+    year: 1997,
+    author: {
+        name: null,
+        books: [] // → [bookInfo]
+    }
+};
+bookInfo.author.books.push(bookInfo); // add circular reference
+
+const bookDiscount = {
+    title: "Harry Potter and the Philosopher's Stone",
+    author: {
+        name: "J. K. Rowling"
+    }
+};
+
+const book = merge([bookInfo, bookDiscount]);
+```
+
+#### result:
+
+```json5
+{
+  title: "Harry Potter and the Philosopher's Stone",
+  year: 1997,
+  author: {
+    name: "J. K. Rowling",
+    books: [/* Circular reference */]
+  }
+}
+```
+
+### *Circular cross-references*
+
+```typescript
+// object1 = { a: 1, o2: object2 }
+// object2 = { b: 2, o1: object1 }
+const object1 = { a: 1 };
+const object2 = { b: 2 };
+object1.o2 = object2;
+object2.o1 = object1;
+
+const merged = merge([object1, object2]);
+```
+
+#### result:
+
+```json5
+{
+  a: 1,
+  b: 2,
+  o1: {
+    a: 1,
+    o2: [/* Circular reference → merged.o2 */]
+  },
+  o2: {
+    b: 2,
+    o1: [/* Circular reference → merged.o1 */]
+  }
+}
 ```
