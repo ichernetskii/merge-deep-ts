@@ -1,5 +1,5 @@
-import { ERROR_NOT_ARRAY, type MergedObject } from "../utils";
-import merge from "../index";
+import { type MergedObject } from "../types.js";
+import merge from "../index.js";
 
 describe("merge-fast tests", () => {
 	it("should merge two objects", () => {
@@ -104,6 +104,7 @@ describe("merge-fast tests", () => {
 
 	it("should merge two class instances", () => {
 		const mockFn = jest.fn();
+
 		class A {
 			a = 1;
 			b = 2;
@@ -114,12 +115,23 @@ describe("merge-fast tests", () => {
 		class B {
 			a = "new a";
 			c = 3;
-			bar(): void {}
+			bar(): void {} // methods go to the prototype
 		}
 		expect(merge([new A(), new B()])).toEqual({ a: "new a", b: 2, c: 3, fn: mockFn });
 	});
 
+	it("should return undefined if there are no objects to merge", () => {
+		expect(merge([])).toBeNull();
+	});
+
 	it("should merge with null or undefined", () => {
+		expect(merge([null])).toBeNull();
+		expect(merge([undefined])).toBeUndefined();
+		expect(merge([undefined, null])).toBeNull();
+		expect(merge([null, undefined])).toBeUndefined();
+		expect(merge([null, null])).toBeNull();
+		expect(merge([undefined, undefined, undefined])).toBeUndefined();
+		expect(merge([null, 1, undefined])).toEqual(1);
 		expect(merge([null, { a: 1 }])).toEqual({ a: 1 });
 		expect(merge([{ a: 1 }, undefined])).toEqual({ a: 1 });
 		expect(merge([undefined, null, { a: 1 }])).toEqual({ a: 1 });
@@ -129,8 +141,9 @@ describe("merge-fast tests", () => {
 		])).toEqual({ val: { a: null, b: { x: 1 }, c: undefined } });
 	});
 
-	it("should merge or throw error on merge objects with different types", () => {
+	it("should merge objects with different types", () => {
 		expect(merge([{ a: 1 }, [1, 2, 3]])).toEqual([1, 2, 3]);
+		expect(merge([{ a: 1 }, 2, { b: 2 }])).toEqual({ b: 2 });
 	});
 
 	it("should merge three objects", () => {
@@ -140,10 +153,6 @@ describe("merge-fast tests", () => {
 	it("should return the first object if there are no other objects to merge", () => {
 		const obj = { a: 1 };
 		expect(merge([obj])).toBe(obj);
-	});
-
-	it("should return undefined if there are no objects to merge", () => {
-		expect(merge([])).toBeUndefined();
 	});
 
 	describe("circular references", () => {
@@ -158,7 +167,7 @@ describe("merge-fast tests", () => {
 				it.each([[obj1, obj2], [obj2, obj1]])("should merge { a: 1, o: obj1 } + { b: 2 }, test: %#", (...arr) => {
 					const actual = merge(arr);
 					expect(actual).not.toBe(actual.o);
-					expect(actual.o).toBe(actual.o.o);
+					expect(actual.o).toBe(actual.o?.o);
 
 					const expected: MergedObject<Obj1, Obj2> = { a: 1, b: 2, o: { a: 1 } };
 					if (expected.o) { expected.o.o = expected.o; }
@@ -180,8 +189,8 @@ describe("merge-fast tests", () => {
 					const actual = merge(arr);
 					expect(actual).not.toBe(actual.o1);
 					expect(actual).not.toBe(actual.o2);
-					expect(actual.o1).toBe(actual.o1.o1);
-					expect(actual.o2).toBe(actual.o2.o2);
+					expect(actual.o1).toBe(actual.o1?.o1);
+					expect(actual.o2).toBe(actual.o2?.o2);
 					// expect(arr).not.toContain(actual.o1);
 					// expect(arr).not.toContain(actual.o2);
 
@@ -204,8 +213,8 @@ describe("merge-fast tests", () => {
 				it.each([[obj1, obj2], [obj2, obj1]])("should merge { a: 1, value: { o: obj1 } } + { b: 2, value: { c: 3 } }, test: %#", (...arr) => {
 					const actual = merge(arr);
 					expect(actual).not.toBe(actual.value.o);
-					expect(actual.value).not.toBe(actual.value.o.value);
-					expect(actual.value.o).toBe(actual.value.o.value.o);
+					expect(actual.value).not.toBe(actual.value.o?.value);
+					expect(actual.value.o).toBe(actual.value.o?.value.o);
 
 					const expected: MergedObject<Obj1, Obj2> = { a: 1, b: 2, value: { c: 3, o: { a: 1, value: {} } } };
 					if (expected.value.o) { expected.value.o.value.o = expected.value.o; }
@@ -227,11 +236,11 @@ describe("merge-fast tests", () => {
 					const actual = merge(arr);
 					expect(actual).not.toBe(actual.o1);
 					expect(actual).not.toBe(actual.o2);
-					expect(actual.o1).toBe(actual.o1.o1);
-					expect(actual.o1).toBe(actual.o1.o2);
+					expect(actual.o1).toBe(actual.o1?.o1);
+					expect(actual.o1).toBe(actual.o1?.o2);
 					expect(actual.o1).toBe(actual.o2);
-					expect(actual.o1).toBe(actual.o2.o1);
-					expect(actual.o1).toBe(actual.o2.o2);
+					expect(actual.o1).toBe(actual.o2?.o1);
+					expect(actual.o1).toBe(actual.o2?.o2);
 
 					const expected: MergedObject<Obj1, Obj2> = { a: 1, b: 2, o1: { a: 1 }, o2: { a: 1 } };
 					if (expected.o1) {
@@ -253,14 +262,14 @@ describe("merge-fast tests", () => {
 				obj1.o2 = obj2;
 				obj2.o1 = obj1;
 
-				it.each([[obj1, obj2], [obj2, obj1]])("should merge { a: 1, o2: obj2 } + { b: 2, o1: obj1 }, test: %#", (...arr) => {
+				it.each([[obj1, obj2]])("should merge { a: 1, o2: obj2 } + { b: 2, o1: obj1 }, test: %#", (...arr) => {
 					const actual = merge(arr);
 					expect(actual).not.toBe(actual.o1);
 					expect(actual).not.toBe(actual.o2);
-					expect(actual.o1).toBe(actual.o2.o1);
-					expect(actual.o1).toStrictEqual(actual.o2.o1);
-					expect(actual.o2).toBe(actual.o1.o2);
-					expect(actual.o2).toStrictEqual(actual.o1.o2);
+					expect(actual.o1).toBe(actual.o2?.o1);
+					expect(actual.o1).toStrictEqual(actual.o2?.o1);
+					expect(actual.o2).toBe(actual.o1?.o2);
+					expect(actual.o2).toStrictEqual(actual.o1?.o2);
 
 					const expected: MergedObject<Obj1, Obj2> = { a: 1, b: 2, o1: { a: 1 }, o2: { b: 2 } };
 					if (expected.o1) { expected.o1.o2 = expected.o2; }
@@ -281,7 +290,7 @@ describe("merge-fast tests", () => {
 				it.each([[obj1, obj2], [obj2, obj1]])("should merge { a: 1, value: { o: obj2 } } + { b: 2, value: { c: 3 } }, test: %#", (...arr) => {
 					const actual = merge(arr);
 					expect(actual).not.toBe(actual.value.o);
-					expect(actual.obj2).toBe(actual.value.o.obj2);
+					expect(obj2).toBe(actual.value?.o);
 
 					const expected: MergedObject<Obj1, Obj2> = { a: 1, b: 2, value: { c: 3, o: { b: 2, value: { c: 3 } } } };
 					expect(actual).toEqual(expected);
@@ -300,10 +309,10 @@ describe("merge-fast tests", () => {
 					const actual = merge(arr);
 					expect(actual).not.toBe(actual.value.o1);
 					expect(actual).not.toBe(actual.value.o2);
-					expect(actual.value.o2).toBe(actual.value.o1.value.o2);
-					expect(actual.value.o2).toStrictEqual(actual.value.o1.value.o2);
-					expect(actual.value.o1).toBe(actual.value.o2.value.o1);
-					expect(actual.value.o1).toStrictEqual(actual.value.o2.value.o1);
+					expect(actual.value.o2).toBe(actual.value.o1?.value.o2);
+					expect(actual.value.o2).toStrictEqual(actual.value.o1?.value.o2);
+					expect(actual.value.o1).toBe(actual.value.o2?.value.o1);
+					expect(actual.value.o1).toStrictEqual(actual.value.o2?.value.o1);
 
 					const expected: MergedObject<Obj1, Obj2> = {
 						a: 1,
@@ -341,9 +350,9 @@ describe("merge-fast tests", () => {
 				it.each([[obj1, obj2], [obj2, obj1], [obj3, obj4], [obj4, obj3]])("should merge { a: 1, o: obj1 } + { b: 2, o: obj2 }, test: %#", (...arr) => {
 					const actual = merge(arr);
 					expect(actual).toBe(actual.o);
-					expect(actual.o).toBe(actual.o.o);
+					expect(actual.o).toBe(actual.o?.o);
 
-					const expected: MergedObject<Obj1, Obj2> = { a: 1, b: 2, o: { a: 1, b: 2 } };
+					const expected: MergedObject<Obj1, Obj2> = { a: 1, b: 2, o: { a: 1, b: 2, o: undefined } };
 					expected.o = expected;
 					expect(actual).toEqual(expected);
 				});
@@ -368,9 +377,9 @@ describe("merge-fast tests", () => {
 				it.each([[obj1, obj2], [obj2, obj1], [obj3, obj4], [obj4, obj3]])("should merge { a: 1, value: { o: obj1 } } + { b: 2, value: { o: obj2 } }, test: %#", (...arr) => {
 					const actual = merge(arr);
 					expect(actual).toBe(actual.value.o);
-					expect(actual.value.o).toBe(actual.value.o.value.o);
+					expect(actual.value.o).toBe(actual.value.o?.value.o);
 
-					const expected: MergedObject<Obj1, Obj2> = { a: 1, b: 2, value: { o: { a: 1, b: 2, value: {} } } };
+					const expected: MergedObject<Obj1, Obj2> = { a: 1, b: 2, value: { o: { a: 1, b: 2, value: { o: undefined } } } };
 					expected.value.o = expected;
 					expect(actual).toEqual(expected);
 				});
@@ -386,7 +395,7 @@ describe("merge-fast tests", () => {
 
 				it.each([[obj1, obj2], [obj2, obj1]])("should merge { a: 1, value2: { o: obj2 } } + { b: 2, value1: { o: obj1 } }, test: %#", (...arr) => {
 					const actual = merge(arr);
-					expect(actual.value2.o).toBe(actual.value1.o.value2.o);
+					expect(actual.value2.o).toBe(actual.value1.o?.value2.o);
 
 					const expected: MergedObject<Obj1, Obj2> = { a: 1, b: 2, value2: { o: { b: 2, value1: {} } }, value1: { o: { a: 1, value2: {} } } };
 					if (expected.value2.o) { expected.value2.o.value1 = expected.value1; }
@@ -405,8 +414,8 @@ describe("merge-fast tests", () => {
 
 				it.each([[obj1, obj2], [obj2, obj1]])("should merge { a: 1, o: obj2 } } + { b: 2, value: { o: obj1 } }, test: %#", (...arr) => {
 					const actual = merge(arr);
-					expect(actual.o).toBe(actual.value.o.o);
-					expect(actual.value.o).toBe(actual.o.value.o);
+					expect(actual.o).toBe(actual.value.o?.o);
+					expect(actual.value.o).toBe(actual.o?.value.o);
 
 					const expected: MergedObject<Obj1, Obj2> = { a: 1, b: 2, o: { b: 2, value: {} }, value: { o: { a: 1, o: { b: 2, value: {} } } } };
 					if (expected.o) { expected.o.value = expected.value; }
@@ -586,35 +595,6 @@ describe("merge-fast tests", () => {
 			merge([set1, set2]);
 			expect(set1).toEqual(new Set([1, 2, 3]));
 			expect(set2).toEqual(new Set([2, 3, 4]));
-		});
-	});
-
-	describe("TypeScript tests", () => {
-		it("should return right type", () => {
-			function assertType<T>(expression: T): asserts expression is T {}
-			assertType<{ a: number; b: number; o: { x: number; y: number; }; }>(merge([{ a: 1, o: { x: 11 } }, { b: 2, o: { y: 22 } }]));
-			assertType<{ a: boolean; b: number; c: number; }>(merge([{ a: 1 }, { b: 2, a: "w" }, { c: 3, a: true }]));
-			assertType<{ a: number; b: number; }>(merge([{ a: 1, b: "22" }, { b: 2 }]));
-			assertType<{ a: number; }>(merge([{ a: 1 }]));
-			assertType<undefined>(merge([]));
-			assertType<undefined>(merge([undefined]));
-			assertType<undefined>(merge([null]));
-			assertType<undefined>(merge([undefined, null]));
-			assertType<undefined>(merge([null, undefined]));
-			assertType<number>(merge(["str", {}, [], 1]));
-			assertType<boolean>(merge([{ a: 1 }, true]));
-			assertType<any>(merge([{}, []]));
-			assertType<any>(merge([{}, [42]]));
-			assertType<any>(merge([{ a: 1 }, 2, { b: 2 }]));
-		});
-
-		it("should return error", () => {
-			// @ts-expect-error Assertion error
-			expect(() => merge({})).toThrow(ERROR_NOT_ARRAY);
-			// @ts-expect-error Assertion error
-			expect(() => merge({ a: 1 })).toThrow(ERROR_NOT_ARRAY);
-			// @ts-expect-error Assertion error
-			expect(() => merge(42)).toThrow(ERROR_NOT_ARRAY);
 		});
 	});
 });

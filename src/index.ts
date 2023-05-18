@@ -1,23 +1,11 @@
 import {
 	ERROR_NOT_ARRAY,
-	type MapKeys,
-	type MapValues,
-	type Mergeable,
-	type MergeableArray,
-	type MergeableMap,
-	type MergeableObject,
-	type MergeableSet,
-	MergeableType,
-	type MergedObject,
-	type NonMergeable,
-	type Nullable,
-	type SetValues,
-	type WithValue,
 	getCounter,
 	getType,
 	isMergeable,
 	isNullable,
 } from "./utils.js";
+import { type Mergeable, MergeableType, type MergedMany, type NonMergeable, type Nullable, type WithValue } from "./types.js";
 
 /**
  * Merge objects with circular references
@@ -27,18 +15,24 @@ import {
  * @param objects - map of traversed objects to their ids. Key - object, value - id
  */
 function mergeCircular(
-	result: WithValue,
-	args: readonly Mergeable[],
-	cache: Map<string, WithValue>,
+	result: WithValue<Mergeable | Nullable>,
+	args: any[],
+	cache: Map<string, WithValue<Mergeable | Nullable>>,
 	objects: WeakMap<Mergeable, number>,
 ): void {
 	if (!Array.isArray(args)) {
 		throw new Error(ERROR_NOT_ARRAY);
 	}
+
+	if (args.length === 0) {
+		result.value = null;
+		return;
+	}
+
 	// filter out null and undefined
 	const nonNullableArgs = args.filter(obj => !isNullable(obj));
 	if (nonNullableArgs.length === 0) {
-		result.value = args.at(-1);
+		result.value = args[args.length - 1];
 		return;
 	}
 	// store mergeable arguments in the `objects` map
@@ -52,7 +46,7 @@ function mergeCircular(
 		result.value = nonNullableArgs[0];
 		return;
 	}
-	const lastArg = nonNullableArgs.at(-1);
+	const lastArg = nonNullableArgs[nonNullableArgs.length - 1];
 	// if last argument isn't mergeable, return it
 	const type = getType(lastArg);
 	if (type === MergeableType.NonMergeable || type === MergeableType.Nullable) {
@@ -74,7 +68,6 @@ function mergeCircular(
 		.join(":");
 	const cached = cache.get(ids)?.value;
 	if (cached) {
-		// assign(result.value, cached);
 		result.value = cached;
 		return;
 	} else {
@@ -100,7 +93,7 @@ function mergeCircular(
 			for (const key of keys) {
 				// merge objects with the same key
 				const values = mergeableArgs.map(obj => obj[key]);
-				const mergedValues: WithValue = { value: undefined };
+				const mergedValues = { value: undefined };
 				mergeCircular(mergedValues, values, cache, objects);
 				result.value[key] = mergedValues.value;
 			}
@@ -112,7 +105,7 @@ function mergeCircular(
 			for (let i = 0; i < maxLength; i++) {
 				// merge objects with the same index
 				const values = mergeableArgs.map(obj => obj[i]).filter(obj => obj !== undefined);
-				const mergedValues: WithValue = { value: undefined };
+				const mergedValues = { value: undefined };
 				mergeCircular(mergedValues, values, cache, objects);
 				result.value[i] = mergedValues.value;
 			}
@@ -134,7 +127,7 @@ function mergeCircular(
 			for (const key of keys) {
 				// merge objects with the same key
 				const values = mergeableArgs.map(obj => obj.get(key));
-				const mergedValues: WithValue = { value: undefined };
+				const mergedValues = { value: undefined };
 				mergeCircular(mergedValues, values, cache, objects);
 				result.value.set(key, mergedValues.value);
 			}
@@ -161,65 +154,16 @@ function mergeCircular(
  * merge([{ a: 1 }, { b: 2 }]); // { a: 1, b: 2 }
  * merge([{ a: 1 }, { a: 2 }]); // { a: 2 }
  */
-function merge(args: Nullable[]): undefined;
-// objects
-function merge<T extends MergeableObject>(args: [T]): T;
-function merge<T1 extends MergeableObject, T2 extends MergeableObject>(args: [T1, T2]): MergedObject<T1, T2>;
 function merge<
-	T1 extends MergeableObject,
-	T2 extends MergeableObject,
-	T3 extends MergeableObject,
->(args: [T1, T2, T3]): MergedObject<MergedObject<T1, T2>, T3>;
-function merge<
-	T1 extends MergeableObject,
-	T2 extends MergeableObject,
-	T3 extends MergeableObject,
-	T4 extends MergeableObject,
->(args: [T1, T2, T3, T4]): MergedObject<MergedObject<MergedObject<T1, T2>, T3>, T4>;
-// arrays
-function merge<T extends MergeableArray>(args: [T]): T;
-function merge<T1 extends MergeableArray, T2 extends MergeableArray>(args: [T1, T2]): T1 & T2;
-function merge<
-	T1 extends MergeableArray,
-	T2 extends MergeableArray,
-	T3 extends MergeableArray,
->(args: [T1, T2, T3]): T1 & T2 & T3;
-function merge<
-	T1 extends MergeableArray,
-	T2 extends MergeableArray,
-	T3 extends MergeableArray,
-	T4 extends MergeableArray,
->(args: [T1, T2, T3, T4]): T1 & T2 & T3 & T4;
-// maps
-function merge<T extends MergeableMap>(args: [T]): T;
-function merge<
-	T1 extends MergeableMap,
-	T2 extends MergeableMap,
->(args: [T1, T2]): Map<MapKeys<T1> | MapKeys<T2>, MapValues<T1> | MapValues<T2>>;
-function merge<
-	T1 extends MergeableMap,
-	T2 extends MergeableMap,
-	T3 extends MergeableMap,
->(args: [T1, T2, T3]): Map<MapKeys<T1> | MapKeys<T2> | MapKeys<T3>, MapValues<T1> | MapValues<T2> | MapValues<T3>>;
-function merge<
-	T1 extends MergeableMap,
-	T2 extends MergeableMap,
-	T3 extends MergeableMap,
-	T4 extends MergeableMap,
->(args: [T1, T2, T3, T4]): Map<
-	MapKeys<T1> | MapKeys<T2> | MapKeys<T3> | MapKeys<T4>,
-	MapValues<T1> | MapValues<T2> | MapValues<T3> | MapValues<T4>
->;
-// sets
-function merge<T extends MergeableSet>(args: [T]): T;
-function merge<
-	T1 extends MergeableSet,
-	T2 extends MergeableSet,
->(args: [T1, T2]): Set<SetValues<T1> | SetValues<T2>>;
-function merge<Last>(args: [...any[], NonMergeable<Last>]): NonMergeable<Last>;
-function merge(args: any[]): any;
-function merge(args: any[]): any {
-	const result: WithValue = { value: undefined };
+	T extends [...Rest], // → Tuple
+	Rest extends Params[],
+	RestArrayType extends Rest,
+	MergeableObjectType extends Record<PropertyKey, Params>,
+	MergeableMapType extends Map<Params, Params>,
+	MergeableSet extends Set<Params>,
+	Params extends [...RestArrayType] | MergeableObjectType | MergeableMapType | MergeableSet | NonMergeable<Rest> | Nullable,
+>(args: T): MergedMany<T> {
+	const result: WithValue<any> = { value: undefined };
 	mergeCircular(result, args, new Map(), new WeakMap());
 	return result.value;
 }

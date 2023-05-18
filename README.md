@@ -1,9 +1,9 @@
 # [Merge-Deep-TS](https://www.npmjs.com/package/merge-deep-ts)
 
-![GitHub package.json version](https://img.shields.io/github/package-json/v/ichernetskii/merge-deep-ts)
-![npm bundle size](https://img.shields.io/bundlephobia/minzip/merge-deep-ts)
+<a href="https://www.npmjs.com/package/merge-deep-ts">![GitHub package.json version](https://img.shields.io/github/package-json/v/ichernetskii/merge-deep-ts?logo=npm)</a>
+<a href="https://www.npmjs.com/package/merge-deep-ts">![npm bundle size](https://img.shields.io/bundlephobia/minzip/merge-deep-ts)</a>
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/ichernetskii/merge-deep-ts/publish.yml)
-![Testspace pass ratio](https://img.shields.io/testspace/pass-ratio/ichernetskii/ichernetskii:merge-deep-ts/master?label=passed)
+![Testspace pass ratio](https://img.shields.io/testspace/pass-ratio/ichernetskii/ichernetskii:merge-deep-ts/master?label=passed%20tests)
 [![Coverage Status](https://coveralls.io/repos/github/ichernetskii/merge-deep-ts/badge.svg?branch=ci)](https://coveralls.io/github/ichernetskii/merge-deep-ts?branch=ci)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://img.shields.io/github/license/ichernetskii/merge-deep-ts)
 
@@ -41,8 +41,11 @@ const merge = require("merge-deep-ts").default;
 * Input objects can have any circular references
 * Fast algorithm with caching
 * Strongly typed merged result with TypeScript
+* No dependencies
+* Small size
+* Works in browser and Node.js
 
-## Example
+## Examples
 
 ### *Objects*
 
@@ -74,7 +77,40 @@ const book = merge([bookInfo, bookDiscount]);
 //     };
 // };
 ```
-#### result:
+
+You can use `as const` to get more precise types:
+
+```typescript
+const bookInfo = {
+    title: "Harry Potter",
+    year: 1997,
+    price: {
+        value: 69,
+        currency: "USD"
+    }
+} as const;
+
+const bookDiscount = {
+    title: "Harry Potter and the Philosopher's Stone",
+    price: {
+        value: 49
+    }
+} as const;
+
+const book = merge([bookInfo, bookDiscount]);
+
+// book: {
+//     title: "Harry Potter and the Philosopher's Stone"
+//     year: 1997;
+//     price: {
+//         value: 49;
+//         currency: "USD";
+//     };
+// };
+```
+
+#### Runtime JS result:
+
 ```json5
 {
   title: "Harry Potter and the Philosopher's Stone",
@@ -89,22 +125,11 @@ const book = merge([bookInfo, bookDiscount]);
 ### *Arrays*
 
 ```typescript
-const titles = [
-    { title: "Harry Potter" },
-    { title: "Lord of the Rings" }
-];
-
-const authors = [
-    { author: "J. K. Rowling", birthYear: 1965 },
-    { author: "J. R. R. Tolkien" }
-];
-
-const info = [
-    { year: 1997 },
-    { year: 1954, ISBN: "123-456-789" }
-];
-
-const books = merge([titles, authors, info]);
+const books = merge([
+    [{ title: "Harry Potter" }, { title: "Lord of the Rings" }],
+    [{ author: "J. K. Rowling", birthYear: 1965 }, { author: "J. R. R. Tolkien" }],
+    [{ year: 1997 }, { year: 1954, ISBN: "123-456-789" }],
+]);
 
 // books: Array<{
 //     title: string;
@@ -115,7 +140,42 @@ const books = merge([titles, authors, info]);
 // }>;
 ```
 
-#### result:
+You can use `as const` to get more precise types:
+
+```typescript
+const titles = [
+    { title: "Harry Potter" },
+    { title: "Lord of the Rings" }
+] as const;
+
+const authors = [
+    { author: "J. K. Rowling", birthYear: 1965 },
+    { author: "J. R. R. Tolkien" }
+] as const;
+
+const info = [
+    { year: 1997 },
+    { year: 1954, ISBN: "123-456-789" }
+] as const;
+
+const books = merge([titles, authors, info]);
+
+// books: [
+//     {
+//         title: "Harry Potter";
+//         author: "J. K. Rowling";
+//         birthYear: 1965;
+//         year: 1997;
+//     }, {
+//         title: "Lord of the Rings";
+//         author: "J. R. R. Tolkien";
+//         year: 1954;
+//         ISBN: "123-456-789";
+//     }
+// ]
+```
+
+#### Runtime JS result:
 
 ```json5
 [
@@ -157,7 +217,7 @@ const phoneUpdate = new Map([
 const updatedPhone = merge([phone, phoneUpdate]);
 ```
 
-#### result:
+#### Runtime JS result:
 
 ```
 Map {
@@ -185,7 +245,7 @@ const set2 = new Set([2, 3, 4]);
 const mergedSet = merge([set1, set2]);
 ```
 
-#### result:
+#### Runtime JS result:
 
 ```
 Set { 1, 2, 3, 4 }
@@ -196,22 +256,24 @@ Set { 1, 2, 3, 4 }
 ```typescript
 const bookInfo = {
     title: "Harry Potter",
+    price: 49,
     year: 1997,
     author: {
-        name: null,
+        name: "Joanne Rowling",
         books: [] // → [bookInfo]
     }
 };
 bookInfo.author.books.push(bookInfo); // add circular reference
 
-const bookDiscount = {
-    title: "Harry Potter and the Philosopher's Stone",
+const bookSale = {
+    title: "Harry Potter (sale)",
+    price: 29,
     author: {
         name: "J. K. Rowling"
     }
 };
 
-const book = merge([bookInfo, bookDiscount]);
+const book = merge([bookInfo, bookSale]);
 ```
 
 #### result:
@@ -219,6 +281,7 @@ const book = merge([bookInfo, bookDiscount]);
 ```json5
 {
   title: "Harry Potter and the Philosopher's Stone",
+  price: 29,
   year: 1997,
   author: {
     name: "J. K. Rowling",
