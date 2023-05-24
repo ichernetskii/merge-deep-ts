@@ -8,7 +8,7 @@
     "sourceType": "module",
     "project": "./tsconfig.json"
   },
-  "ignorePatterns": [ "lib/*", "coverage/*" ],
+  "ignorePatterns": [ "dist/*", "coverage/*" ],
   "plugins": ["@typescript-eslint"],
   "rules": {
     "sort-imports": "error",

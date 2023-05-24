@@ -1,5 +1,5 @@
-import { getCounter, getType } from "../src/utils.js";
-import { MergeableType } from "../src/types.js";
+import { getCounter, getType } from "../utils.js";
+import { MergeableType } from "../types.js";
 
 describe("getCounter", () => {
 	it("should return counter", () => {

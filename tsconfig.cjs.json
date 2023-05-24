@@ -2,7 +2,8 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "module": "CommonJS",
-    "outDir": "./lib/cjs"
+    "outDir": "./dist/cjs"
   },
-  "include": ["./src/**/*.ts"]
+	"include": ["./src/**/*.ts"],
+	"exclude": ["./**/*.spec.ts"]
 }

@@ -1,6 +1,6 @@
-import { type Equal, assert } from "../src/types.js";
-import { ERROR_NOT_ARRAY } from "../src/utils.js";
-import merge from "../src/index.js";
+import { type Equal, assert } from "../types.js";
+import { ERROR_NOT_ARRAY } from "../utils.js";
+import merge from "../index.js";
 
 describe("TypeScript tests", () => {
 	it("should return right type", () => {

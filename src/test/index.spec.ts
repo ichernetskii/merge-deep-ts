@@ -1,5 +1,5 @@
-import { type MergedObject } from "../src/types.js";
-import merge from "../src/index.js";
+import { type MergedObject } from "../types.js";
+import merge from "../index.js";
 
 describe("merge-fast tests", () => {
 	it("should merge two objects", () => {

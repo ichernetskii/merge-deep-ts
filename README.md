@@ -1,11 +1,11 @@
 # [Merge-Deep-TS](https://www.npmjs.com/package/merge-deep-ts)
 
 <a href="https://www.npmjs.com/package/merge-deep-ts">![GitHub package.json version](https://img.shields.io/github/package-json/v/ichernetskii/merge-deep-ts?logo=npm)</a>
-<a href="https://www.npmjs.com/package/merge-deep-ts">![npm bundle size](https://img.shields.io/bundlephobia/minzip/merge-deep-ts)</a>
+<a href="https://bundlephobia.com/package/merge-deep-ts@latest">![npm bundle size](https://img.shields.io/bundlephobia/minzip/merge-deep-ts)</a>
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/ichernetskii/merge-deep-ts/publish.yml)
-![Testspace pass ratio](https://img.shields.io/testspace/pass-ratio/ichernetskii/ichernetskii:merge-deep-ts/master?label=passed%20tests)
+<a href="https://ichernetskii.testspace.com/spaces/220047">![Testspace pass ratio](https://img.shields.io/testspace/pass-ratio/ichernetskii/ichernetskii:merge-deep-ts/master?label=passed%20tests)</a>
 [![Coverage Status](https://coveralls.io/repos/github/ichernetskii/merge-deep-ts/badge.svg?branch=ci)](https://coveralls.io/github/ichernetskii/merge-deep-ts?branch=ci)
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://img.shields.io/github/license/ichernetskii/merge-deep-ts)
+<a href="https://github.com/ichernetskii/merge-deep-ts/blob/master/LICENSE.md">[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://img.shields.io/github/license/ichernetskii/merge-deep-ts)</a>
 
 Deep fast merge JavaScript objects with circular references handling and TypeScript support
 
@@ -241,7 +241,7 @@ Map {
     name => "Alex",
     age => 35
   }, {
-    name => "John", 
+    name => "John",
     age => 42
   }]
 }
