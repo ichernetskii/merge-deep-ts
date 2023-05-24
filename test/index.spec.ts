@@ -1,5 +1,5 @@
-import { type MergedObject } from "../types.js";
-import merge from "../index.js";
+import { type MergedObject } from "../src/types.js";
+import merge from "../src/index.js";
 
 describe("merge-fast tests", () => {
 	it("should merge two objects", () => {
@@ -191,8 +191,6 @@ describe("merge-fast tests", () => {
 					expect(actual).not.toBe(actual.o2);
 					expect(actual.o1).toBe(actual.o1?.o1);
 					expect(actual.o2).toBe(actual.o2?.o2);
-					// expect(arr).not.toContain(actual.o1);
-					// expect(arr).not.toContain(actual.o2);
 
 					const expected: MergedObject<Obj1, Obj2> = { a: 1, b: 2, o1: { a: 1 }, o2: { b: 2 } };
 					if (expected.o1) { expected.o1.o1 = expected.o1; }

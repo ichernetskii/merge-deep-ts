@@ -4,9 +4,9 @@
     "target": "ES2016",
     "module": "ES6",
     "moduleResolution": "NodeNext",
-    "outDir": "dist",
+    "outDir": "lib",
     "declaration": true,
-    "declarationDir": "dist",
+    "declarationDir": "lib",
     "types": ["node", "jest"],
     // checks
     "strict": true,
@@ -15,7 +15,7 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "allowUnreachableCode": false,
-    "allowUnusedLabels": false,
+    "allowUnusedLabels": false
   },
-  "include": ["./src/**/*.ts"]
+  "include": ["./**/*.ts"]
 }

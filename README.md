@@ -68,7 +68,7 @@ const bookDiscount = {
 
 const book = merge([bookInfo, bookDiscount]);
 
-// book: {
+// const book: {
 //     title: string;
 //     year: number;
 //     price: {
@@ -99,8 +99,8 @@ const bookDiscount = {
 
 const book = merge([bookInfo, bookDiscount]);
 
-// book: {
-//     title: "Harry Potter and the Philosopher's Stone"
+// const book: {
+//     title: "Harry Potter and the Philosopher's Stone";
 //     year: 1997;
 //     price: {
 //         value: 49;
@@ -109,7 +109,7 @@ const book = merge([bookInfo, bookDiscount]);
 // };
 ```
 
-#### Runtime JS result:
+Runtime JS result:
 
 ```json5
 {
@@ -123,21 +123,33 @@ const book = merge([bookInfo, bookDiscount]);
 ```
 
 ### *Arrays*
+Arrays are merged by index. If the index is not present in the first array, the value is taken from the second array.
 
 ```typescript
 const books = merge([
-    [{ title: "Harry Potter" }, { title: "Lord of the Rings" }],
-    [{ author: "J. K. Rowling", birthYear: 1965 }, { author: "J. R. R. Tolkien" }],
-    [{ year: 1997 }, { year: 1954, ISBN: "123-456-789" }],
+    [
+        { title: "Harry Potter" },
+        { title: "Lord of the Rings" }
+    ], [
+        { author: "J. K. Rowling", birthYear: 1965 },
+        { author: "J. R. R. Tolkien" }
+    ], [
+        { year: 1997 },
+        { year: 1954, ISBN: "123-456-789" }
+    ],
 ]);
 
-// books: Array<{
+// const books: [{
 //     title: string;
 //     author: string;
+//     year: number;
 //     birthYear: number;
+// }, {
+//     title: string;
+//     author: string;
 //     year: number;
 //     ISBN: string;
-// }>;
+// }];
 ```
 
 You can use `as const` to get more precise types:
@@ -160,22 +172,20 @@ const info = [
 
 const books = merge([titles, authors, info]);
 
-// books: [
-//     {
-//         title: "Harry Potter";
-//         author: "J. K. Rowling";
-//         birthYear: 1965;
-//         year: 1997;
-//     }, {
-//         title: "Lord of the Rings";
-//         author: "J. R. R. Tolkien";
-//         year: 1954;
-//         ISBN: "123-456-789";
-//     }
-// ]
+// const books: [{
+//     title: "Harry Potter";
+//     author: "J. K. Rowling";
+//     birthYear: 1965;
+//     year: 1997;
+// }, {
+//     title: "Lord of the Rings";
+//     author: "J. R. R. Tolkien";
+//     year: 1954;
+//     ISBN: "123-456-789";
+// }];
 ```
 
-#### Runtime JS result:
+Runtime JS result:
 
 ```json5
 [
@@ -217,7 +227,7 @@ const phoneUpdate = new Map([
 const updatedPhone = merge([phone, phoneUpdate]);
 ```
 
-#### Runtime JS result:
+Runtime JS result:
 
 ```
 Map {
@@ -245,7 +255,7 @@ const set2 = new Set([2, 3, 4]);
 const mergedSet = merge([set1, set2]);
 ```
 
-#### Runtime JS result:
+Runtime JS result:
 
 ```
 Set { 1, 2, 3, 4 }
@@ -276,7 +286,7 @@ const bookSale = {
 const book = merge([bookInfo, bookSale]);
 ```
 
-#### result:
+Runtime JS result:
 
 ```json5
 {
@@ -303,7 +313,7 @@ object2.o1 = object1;
 const merged = merge([object1, object2]);
 ```
 
-#### result:
+Runtime JS result:
 
 ```json5
 {
