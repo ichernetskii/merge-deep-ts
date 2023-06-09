@@ -26,7 +26,7 @@ jobs:
           testspace ./reports/report.xml
         if: always()
       - name: Coveralls GitHub Action 📊
-        uses: coverallsapp/github-action@v1
+        uses: coverallsapp/github-action@v2
       - name: Publish package on NPM 📦
         run: echo "npmAuthToken:" "\${NODE_AUTH_TOKEN}" >> ./.yarnrc.yml && yarn publish
         env:
