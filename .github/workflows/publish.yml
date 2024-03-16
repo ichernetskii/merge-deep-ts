@@ -28,6 +28,6 @@ jobs:
       - name: Coveralls GitHub Action 📊
         uses: coverallsapp/github-action@v2
       - name: Publish package on NPM 📦
-        run: echo "npmAuthToken:" "\${NODE_AUTH_TOKEN}" >> ./.yarnrc.yml && yarn publish
+        run: echo "npmAuthToken:" "\${NODE_AUTH_TOKEN}" >> ./.yarnrc.yml && yarn npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

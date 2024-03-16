@@ -1,6 +1,6 @@
 {
   "name": "merge-deep-ts",
-  "version": "1.2.11",
+  "version": "1.2.12",
   "author": "Ilia Chernetskii <ichernetskii@gmail.com>",
   "license": "MIT",
   "description": "Deep fast merge JavaScript objects with circular references handling and TypeScript support",
