@@ -1,6 +1,6 @@
 {
   "name": "merge-deep-ts",
-  "version": "1.2.9",
+  "version": "1.2.8",
   "author": "Ilia Chernetskii <ichernetskii@gmail.com>",
   "license": "MIT",
   "description": "Deep fast merge JavaScript objects with circular references handling and TypeScript support",
@@ -68,6 +68,5 @@
     "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
     "typescript": "5.4.2"
-  },
-  "packageManager": "yarn@4.1.1"
+  }
 }
