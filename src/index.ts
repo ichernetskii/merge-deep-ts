@@ -1,12 +1,11 @@
-import { ERROR_NOT_ARRAY, getCounter, getType, isMergeable, isNullable } from "./utils.js";
 import {
-	type Mergeable,
-	MergeableType,
-	type MergedMany,
-	type NonMergeable,
-	type Nullable,
-	type WithValue,
-} from "./types.js";
+	ERROR_NOT_ARRAY,
+	getCounter,
+	getType,
+	isMergeable,
+	isNullable,
+} from "./utils.js";
+import { type Mergeable, MergeableType, type MergedMany, type NonMergeable, type Nullable, type WithValue } from "./types.js";
 
 /**
  * Merge objects with circular references
@@ -38,7 +37,7 @@ function mergeCircular(
 	}
 	// store mergeable arguments in the `objects` map
 	for (const obj of nonNullableArgs) {
-		if (isMergeable(obj) && !objects.has(obj)) {
+		if (!objects.has(obj) && isMergeable(obj)) {
 			objects.set(obj, getCounter());
 		}
 	}
@@ -64,7 +63,7 @@ function mergeCircular(
 
 	// check if we already have the result in cache
 	const ids = mergeableArgs
-		.map(obj => objects.get(obj as Mergeable))
+		.map(obj => objects.get(obj))
 		.sort()
 		.join(":");
 	const cached = cache.get(ids)?.value;
@@ -102,7 +101,7 @@ function mergeCircular(
 		}
 		case MergeableType.Array: {
 			result.value = [];
-			const maxLength = mergeableArgs.reduce<number>((acc, arr: Mergeable[]) => Math.max(acc, arr.length), 0);
+			const maxLength = mergeableArgs.reduce((acc, arr) => Math.max(acc, arr.length), 0);
 			for (let i = 0; i < maxLength; i++) {
 				// merge objects with the same index
 				const values = mergeableArgs.map(obj => obj[i]).filter(obj => obj !== undefined);
@@ -151,7 +150,7 @@ function mergeCircular(
  * @param args Array of objects to merge
  * @returns The deeply merged object.
  * @example
- * import merge from "merge-deep-ts";
+ * import merge from "merge-fast";
  * merge([{ a: 1 }, { b: 2 }]); // { a: 1, b: 2 }
  * merge([{ a: 1 }, { a: 2 }]); // { a: 2 }
  */
@@ -165,7 +164,7 @@ function merge<
 	Params extends [...RestArrayType] | MergeableObjectType | MergeableMapType | MergeableSet | NonMergeable<Rest> | Nullable,
 >(args: T): MergedMany<T> {
 	const result: WithValue<any> = { value: undefined };
-	mergeCircular(result as WithValue<Mergeable | Nullable>, args, new Map(), new WeakMap());
+	mergeCircular(result, args, new Map(), new WeakMap());
 	return result.value;
 }
 
