@@ -11,10 +11,10 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: "16.x"
+          node-version: "20.x"
           registry-url: "https://registry.npmjs.org"
       - name: Install dependencies and build 🔧
-        run: yarn install --immutable && yarn run build
+        run: corepack enable && yarn set version 4.1.1 && yarn install --immutable && yarn run build
       - name: Setup Testspace 🚀
         uses: testspace-com/setup-testspace@v1
         with:
