@@ -1022,10 +1022,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^20.2.3":
+"@types/node@npm:*":
   version: 20.2.3
   resolution: "@types/node@npm:20.2.3"
   checksum: 10c0/de79ce435f28354dd80f1203db2a5a0606543964400738007fe653d6248a75a9bbec7e7d9b350c475f3b0de514f4d2adbd642abe14f4a6dd40de92c0b8533b5e
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^20.19.25":
+  version: 20.19.25
+  resolution: "@types/node@npm:20.19.25"
+  dependencies:
+    undici-types: "npm:~6.21.0"
+  checksum: 10c0/992f18cb03264e8dc2fd3cb64f428ee4997cb6d928dad68bf4b752eacac73062697ce7ce6a0e71a6d15af510814397a20597a72332dfec638e02fb3a382ad014
   languageName: node
   linkType: hard
 
@@ -4076,7 +4085,7 @@ __metadata:
   resolution: "merge-deep-ts@workspace:."
   dependencies:
     "@types/jest": "npm:^29.5.1"
-    "@types/node": "npm:^20.2.3"
+    "@types/node": "npm:^20.19.25"
     "@typescript-eslint/eslint-plugin": "npm:^5.59.7"
     "@typescript-eslint/parser": "npm:^5.59.7"
     cpy-cli: "npm:^4.2.0"
@@ -5456,6 +5465,13 @@ __metadata:
     has-symbols: "npm:^1.0.3"
     which-boxed-primitive: "npm:^1.0.2"
   checksum: 10c0/81ca2e81134167cc8f75fa79fbcc8a94379d6c61de67090986a2273850989dd3bae8440c163121b77434b68263e34787a675cbdcb34bb2f764c6b9c843a11b66
+  languageName: node
+  linkType: hard
+
+"undici-types@npm:~6.21.0":
+  version: 6.21.0
+  resolution: "undici-types@npm:6.21.0"
+  checksum: 10c0/c01ed51829b10aa72fc3ce64b747f8e74ae9b60eafa19a7b46ef624403508a54c526ffab06a14a26b3120d055e1104d7abe7c9017e83ced038ea5cf52f8d5e04
   languageName: node
   linkType: hard
 

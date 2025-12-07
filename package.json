@@ -1,6 +1,6 @@
 {
   "name": "merge-deep-ts",
-  "version": "1.2.13",
+  "version": "1.2.14",
   "author": "Ilia Chernetskii <ichernetskii@gmail.com>",
   "license": "MIT",
   "description": "Deep fast merge JavaScript objects with circular references handling and TypeScript support",
@@ -54,7 +54,7 @@
   },
   "devDependencies": {
     "@types/jest": "^29.5.1",
-    "@types/node": "^20.2.3",
+    "@types/node": "^20.19.25",
     "@typescript-eslint/eslint-plugin": "^5.59.7",
     "@typescript-eslint/parser": "^5.59.7",
     "cpy-cli": "^4.2.0",
@@ -68,5 +68,6 @@
     "ts-jest": "^29.1.0",
     "ts-node": "^10.9.1",
     "typescript": "5.0.4"
-  }
+  },
+  "packageManager": "yarn@4.12.0"
 }
