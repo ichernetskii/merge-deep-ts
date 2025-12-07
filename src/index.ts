@@ -150,7 +150,7 @@ function mergeCircular(
  * @param args Array of objects to merge
  * @returns The deeply merged object.
  * @example
- * import merge from "merge-fast";
+ * import merge from "merge-deep-ts";
  * merge([{ a: 1 }, { b: 2 }]); // { a: 1, b: 2 }
  * merge([{ a: 1 }, { a: 2 }]); // { a: 2 }
  */
