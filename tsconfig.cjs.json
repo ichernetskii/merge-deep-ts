@@ -3,9 +3,11 @@
   "compilerOptions": {
     "module": "CommonJS",
     "moduleResolution": "Bundler",
+    "noEmit": false,
+    "types": [],
     "rootDir": "./src",
     "outDir": "./dist/cjs"
   },
 	"include": ["./src/**/*.ts"],
-	"exclude": ["./**/*.spec.ts"]
+	"exclude": ["./src/test/**"]
 }

@@ -15,30 +15,21 @@ export default defineConfig(
 			},
 		},
 		rules: {
-			"no-return-assign": "off",
 			"@typescript-eslint/no-unused-vars": ["error", { args: "all", caughtErrors: "all" }],
 			"@typescript-eslint/switch-exhaustiveness-check": "warn",
 			"@typescript-eslint/strict-boolean-expressions": "off",
-			"@typescript-eslint/no-explicit-any": "off",
 			"@typescript-eslint/no-empty-function": "off",
 			"@typescript-eslint/no-confusing-void-expression": "off",
 			"@typescript-eslint/consistent-type-definitions": "off",
-			"@typescript-eslint/require-array-sort-compare": "off",
-			// the `v` flag requires ES2024, the build targets ES2016
+			// the merge helpers fill the `target` objects they create
+			"no-param-reassign": ["error", { props: true, ignorePropertyModificationsFor: ["target"] }],
+			// the build targets ES2016: the `v` flag requires ES2024, `Object.hasOwn` requires ES2022
 			"require-unicode-regexp": ["error", { requireFlag: "u" }],
+			"prefer-object-has-own": "off",
 			// not part of the previous rule set (eslint-config-standard-with-typescript)
 			"@typescript-eslint/no-magic-numbers": "off",
 			"@typescript-eslint/prefer-destructuring": "off",
 			"no-plusplus": "off",
-			"no-param-reassign": "off",
-			"complexity": "off",
-			"@typescript-eslint/no-unsafe-argument": "off",
-			"@typescript-eslint/no-unsafe-assignment": "off",
-			"@typescript-eslint/no-unsafe-call": "off",
-			"@typescript-eslint/no-unsafe-member-access": "off",
-			"@typescript-eslint/no-unsafe-return": "off",
-			"@typescript-eslint/no-unsafe-type-assertion": "off",
-			"@typescript-eslint/no-unnecessary-type-parameters": "off",
 		},
 	},
 	{
@@ -47,6 +38,9 @@ export default defineConfig(
 			"max-lines": "off",
 			"max-nested-callbacks": "off",
 			"@typescript-eslint/class-methods-use-this": "off",
+			"@typescript-eslint/no-explicit-any": "off",
+			"@typescript-eslint/no-unsafe-type-assertion": "off",
+			"@typescript-eslint/no-unnecessary-type-parameters": "off",
 		},
 	},
 	{

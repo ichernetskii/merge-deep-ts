@@ -5,7 +5,7 @@
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/ichernetskii/merge-deep-ts/publish.yml)
 <a href="https://ichernetskii.testspace.com/spaces/220047">![Testspace pass ratio](https://img.shields.io/testspace/pass-ratio/ichernetskii/ichernetskii:merge-deep-ts/220047?label=passed%20tests)</a>
 [![Coverage Status](https://coveralls.io/repos/github/ichernetskii/merge-deep-ts/badge.svg)](https://coveralls.io/github/ichernetskii/merge-deep-ts)
-<a href="https://github.com/ichernetskii/merge-deep-ts/blob/master/LICENSE.md">[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://img.shields.io/github/license/ichernetskii/merge-deep-ts)</a>
+<a href="https://github.com/ichernetskii/merge-deep-ts/blob/master/LICENSE">[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://img.shields.io/github/license/ichernetskii/merge-deep-ts)</a>
 
 Deep fast merge JavaScript objects with circular references handling and TypeScript support.
 
@@ -13,11 +13,11 @@ Deep fast merge JavaScript objects with circular references handling and TypeScr
 
 ```sh
 # Install with npm
-npm install deep-merge-ts
+npm install merge-deep-ts
 ```
 ```sh
 # Install with yarn
-yarn add deep-merge-ts
+yarn add merge-deep-ts
 ```
 
 ## Usage
@@ -290,7 +290,7 @@ Runtime JS result:
 
 ```json5
 {
-  title: "Harry Potter and the Philosopher's Stone",
+  title: "Harry Potter (sale)",
   price: 29,
   year: 1997,
   author: {

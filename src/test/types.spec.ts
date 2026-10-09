@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars -- `actual*` values are only used in type assertions */
-import { type Equal, assert } from "../types.js";
+import { type Equal, assert } from "./helpers.js";
 import { ERROR_NOT_ARRAY } from "../utils.js";
 import merge from "../index.js";
 
@@ -162,6 +162,51 @@ describe("TypeScript tests", () => {
 		]);
 		type expected28 = Set<string | boolean | number>;
 		assert<Equal<expected28, typeof actual28>>();
+	});
+
+	it("should infer types that match the runtime result", () => {
+		// arguments are merged from left to right: a non-mergeable value replaces everything merged before it
+		const actual1 = merge([{ a: 1 }, { b: 2 }, 42, { c: 3 }]);
+		expect(actual1).toEqual({ c: 3 });
+		assert<Equal<{ c: number; }, typeof actual1>>();
+
+		// arrays of unknown length
+		const list: Array<{ a: number; }> = [{ a: 1 }, { a: 2 }];
+		const actual2 = merge(list);
+		expect(actual2).toEqual({ a: 2 });
+		assert<Equal<{ a: number; } | null, typeof actual2>>();
+
+		// interfaces are merged like plain objects
+		interface I1 { a: number; o: { x: number; }; }
+		interface I2 { b: string; o: { y: number; }; }
+		const i1: I1 = { a: 1, o: { x: 1 } };
+		const i2: I2 = { b: "2", o: { y: 2 } };
+		const actual3 = merge([i1, i2]);
+		expect(actual3).toEqual({ a: 1, b: "2", o: { x: 1, y: 2 } });
+		assert<Equal<{ a: number; b: string; o: { x: number; y: number; }; }, typeof actual3>>();
+
+		// optional properties stay optional
+		const optional: { b?: number; c?: number; } = {};
+		const actual4 = merge([{ a: 1, c: 2 }, optional]);
+		expect(actual4).toEqual({ a: 1, c: 2 });
+		assert<Equal<{ a: number; b?: number; c: number; }, typeof actual4>>();
+
+		// readonly tuples are accepted and the result is mutable
+		const args = [{ a: 1 }, { b: 2 }] as const;
+		const actual5 = merge(args);
+		expect(actual5).toEqual({ a: 1, b: 2 });
+		assert<Equal<{ a: 1; b: 2; }, typeof actual5>>();
+
+		// a tuple merged with an array of unknown length
+		const strings: string[] = ["a", "b", "c"];
+		const actual6 = merge([[1, 2], strings]);
+		expect(actual6).toEqual(["a", "b", "c"]);
+		assert<Equal<Array<number | string>, typeof actual6>>();
+
+		// undefined elements of arrays
+		const actual7 = merge([[1, undefined], [2]]);
+		expect(actual7).toStrictEqual([2, undefined]);
+		assert<Equal<[number, undefined], typeof actual7>>();
 	});
 
 	it("should return error", () => {

@@ -4,9 +4,8 @@
     "target": "ES2016",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "outDir": "dist",
     "declaration": true,
-    "declarationDir": "dist",
+    "noEmit": true,
     "types": ["node", "jest"],
     "skipLibCheck": true,
     // checks
@@ -18,5 +17,5 @@
     "allowUnreachableCode": false,
     "allowUnusedLabels": false
   },
-  "include": ["./**/*.ts"]
+  "include": ["src", "jest.config.ts"]
 }

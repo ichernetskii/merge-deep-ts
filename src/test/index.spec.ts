@@ -345,13 +345,25 @@ describe("merge-fast tests", () => {
 				obj3.o = obj4;
 				obj4.o = obj3;
 
-				it.each([[obj1, obj2], [obj2, obj1], [obj3, obj4], [obj4, obj3]])("should merge { a: 1, o: obj1 } + { b: 2, o: obj2 }, test: %#", (...arr) => {
+				it.each([[obj1, obj2], [obj2, obj1]])("should merge { a: 1, o: obj1 } + { b: 2, o: obj2 }, test: %#", (...arr) => {
 					const actual = merge(arr);
 					expect(actual).toBe(actual.o);
 					expect(actual.o).toBe(actual.o?.o);
 
 					const expected: MergedObject<Obj1, Obj2> = { a: 1, b: 2, o: { a: 1, b: 2, o: undefined } };
 					expected.o = expected;
+					expect(actual).toEqual(expected);
+				});
+
+				it.each([[obj3, obj4], [obj4, obj3]])("should merge { a: 1, o: obj4 } + { b: 2, o: obj3 }, test: %#", (...arr) => {
+					// merge([obj3, obj4]).o = merge([obj4, obj3]): the same objects in another order, so it's another result
+					const actual = merge(arr);
+					expect(actual).not.toBe(actual.o);
+					expect(actual).toBe(actual.o?.o);
+
+					type Expected = { a: number; b: number; o?: Expected; };
+					const expected: Expected = { a: 1, b: 2, o: { a: 1, b: 2 } };
+					if (expected.o) { expected.o.o = expected; }
 					expect(actual).toEqual(expected);
 				});
 			});
@@ -372,13 +384,25 @@ describe("merge-fast tests", () => {
 				obj3.value.o = obj4;
 				obj4.value.o = obj3;
 
-				it.each([[obj1, obj2], [obj2, obj1], [obj3, obj4], [obj4, obj3]])("should merge { a: 1, value: { o: obj1 } } + { b: 2, value: { o: obj2 } }, test: %#", (...arr) => {
+				it.each([[obj1, obj2], [obj2, obj1]])("should merge { a: 1, value: { o: obj1 } } + { b: 2, value: { o: obj2 } }, test: %#", (...arr) => {
 					const actual = merge(arr);
 					expect(actual).toBe(actual.value.o);
 					expect(actual.value.o).toBe(actual.value.o?.value.o);
 
 					const expected: MergedObject<Obj1, Obj2> = { a: 1, b: 2, value: { o: { a: 1, b: 2, value: { o: undefined } } } };
 					expected.value.o = expected;
+					expect(actual).toEqual(expected);
+				});
+
+				it.each([[obj3, obj4], [obj4, obj3]])("should merge { a: 1, value: { o: obj4 } } + { b: 2, value: { o: obj3 } }, test: %#", (...arr) => {
+					// merge([obj3, obj4]).value.o = merge([obj4, obj3]): the same objects in another order, so it's another result
+					const actual = merge(arr);
+					expect(actual).not.toBe(actual.value.o);
+					expect(actual).toBe(actual.value.o?.value.o);
+
+					type Expected = { a: number; b: number; value: { o?: Expected; }; };
+					const expected: Expected = { a: 1, b: 2, value: { o: { a: 1, b: 2, value: {} } } };
+					if (expected.value.o) { expected.value.o.value.o = expected; }
 					expect(actual).toEqual(expected);
 				});
 			});
@@ -439,7 +463,7 @@ describe("merge-fast tests", () => {
 			it("should merge [ 1, arr1 ] + [ 2 ]", () => {
 				type Arr = [number, Arr?];
 				const arr1: Arr = [1]; // arr1 = [ 1, arr1 ]
-				const arr2 = [2]; // arr2 = [ 2 ]
+				const arr2: Arr = [2]; // arr2 = [ 2 ]
 				arr1.push(arr1);
 
 				let actual = merge([arr1, arr2]); // → [ 2, [1, arr1] ]
@@ -593,6 +617,69 @@ describe("merge-fast tests", () => {
 			merge([set1, set2]);
 			expect(set1).toEqual(new Set([1, 2, 3]));
 			expect(set2).toEqual(new Set([2, 3, 4]));
+		});
+	});
+
+	describe("regressions", () => {
+		const emptyObject: Record<string, unknown> = {};
+
+		it("should merge the same objects in a different order independently", () => {
+			const x = { v: 1 };
+			const y = { v: 2 };
+			expect(merge([{ p: x, q: y }, { p: y, q: x }])).toEqual({ p: { v: 2 }, q: { v: 1 } });
+		});
+
+		it("should merge cross references with conflicting values", () => {
+			type Obj = { v: number; o?: Obj; };
+			const obj1: Obj = { v: 1 }; // obj1 = { v: 1, o: obj2 }
+			const obj2: Obj = { v: 2 }; // obj2 = { v: 2, o: obj1 }
+			obj1.o = obj2;
+			obj2.o = obj1;
+
+			// actual = merge([obj1, obj2]), actual.o = merge([obj2, obj1]), actual.o.o = merge([obj1, obj2])
+			const actual = merge([obj1, obj2]);
+			expect(actual.v).toBe(2);
+			expect(actual.o?.v).toBe(1);
+			expect(actual.o?.o).toBe(actual);
+		});
+
+		it("should keep undefined elements and holes in arrays", () => {
+			expect(merge([[1, undefined], [2]])).toStrictEqual([2, undefined]);
+			expect(merge([[undefined], [undefined]])).toStrictEqual([undefined]);
+			// eslint-disable-next-line no-sparse-arrays -- holes are tested on purpose
+			expect(merge([[, 1], [, 2]])).toStrictEqual([undefined, 2]);
+			expect(merge([{ a: [1, undefined, 3] }, { a: [4] }])).toStrictEqual({ a: [4, undefined, 3] });
+		});
+
+		it("shouldn't take inherited properties of the other objects", () => {
+			const actual = merge([{ toString: "a", constructor: { x: 1 }, valueOf: 1 }, { b: 1 }, Object.create({ valueOf: 2 }) as object]);
+			expect(actual).toEqual({ toString: "a", constructor: { x: 1 }, valueOf: 1, b: 1 });
+		});
+
+		it("shouldn't change the prototype of the result via the __proto__ key", () => {
+			const source = JSON.parse("{ \"__proto__\": { \"polluted\": true }, \"a\": 1 }") as Record<string, unknown>;
+			const actual: Record<string, unknown> = merge([{ b: 2 }, source]);
+			expect(Object.getPrototypeOf(actual)).toBe(Object.prototype);
+			expect(actual["polluted"]).toBeUndefined();
+			expect(Object.keys(actual)).toEqual(["b", "__proto__", "a"]);
+			expect(Object.getOwnPropertyDescriptor(actual, "__proto__")?.value).toEqual({ polluted: true });
+			expect(emptyObject["polluted"]).toBeUndefined();
+		});
+
+		it("should keep a primitive __proto__ value", () => {
+			const source = JSON.parse("{ \"__proto__\": 1 }") as Record<string, unknown>;
+			const actual = merge([{ a: 1 }, source]);
+			expect(Object.getOwnPropertyDescriptor(actual, "__proto__")?.value).toBe(1);
+			expect(Object.getPrototypeOf(actual)).toBe(Object.prototype);
+		});
+
+		it("shouldn't pollute prototypes via the constructor and prototype keys", () => {
+			const source = JSON.parse("{ \"constructor\": { \"prototype\": { \"polluted\": true } }, \"prototype\": { \"polluted\": true } }") as Record<string, unknown>;
+			const actual = merge([{ constructor: { name: "x" } }, source]);
+			expect(Object.keys(actual)).toEqual(["constructor", "prototype"]);
+			expect(emptyObject["polluted"]).toBeUndefined();
+			expect((Object.prototype as unknown as Record<string, unknown>)["polluted"]).toBeUndefined();
+			expect(Object.getPrototypeOf(actual)).toBe(Object.prototype);
 		});
 	});
 });
