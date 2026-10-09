@@ -60,3 +60,18 @@ jobs:
           node-version: ${{ matrix.node }}
       - name: Smoke tests of the build
         run: node --test test/smoke/esm.test.mjs test/smoke/cjs.test.cjs
+  types-compat:
+    name: Types with TypeScript 4.9-7.x
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - name: Install dependencies 🔧
+        run: npm install --global corepack@latest && corepack enable && yarn install --immutable
+      # the packed package is installed with npm into temporary projects, see the script
+      - name: Type tests of the package with different TypeScript versions
+        run: yarn run test:types-compat

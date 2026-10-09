@@ -59,7 +59,7 @@ export default defineConfig(
 			"@stylistic/no-tabs": ["error", { allowIndentationTabs: true }],
 			"@stylistic/semi": ["error", "always"],
 			"@stylistic/comma-dangle": ["error", "always-multiline"],
-			"@stylistic/space-before-function-paren": ["error", "never"],
+			"@stylistic/space-before-function-paren": ["error", { anonymous: "never", named: "never", asyncArrow: "never", catch: "always" }],
 			"@stylistic/member-delimiter-style": [
 				"error",
 				{

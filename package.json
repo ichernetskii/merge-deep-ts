@@ -56,6 +56,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:types": "tsc --project tsconfig.test-types.json",
+    "test:types-compat": "node scripts/types-compat.mjs",
     "test:smoke": "node --test test/smoke/esm.test.mjs test/smoke/cjs.test.cjs",
     "lint": "eslint .",
     "lint:package": "yarn pack --out reports/package.tgz && publint --strict reports/package.tgz && attw reports/package.tgz",
