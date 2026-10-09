@@ -12,23 +12,24 @@ Deep fast merge JavaScript objects with circular references handling and TypeScr
 ## Installation
 
 ```sh
-# Install with npm
 npm install merge-deep-ts
 ```
 ```sh
-# Install with yarn
 yarn add merge-deep-ts
+```
+```sh
+pnpm add merge-deep-ts
 ```
 
 ## Usage
 
-Once the package is installed, you can import the library using import or require approach:
+`merge` takes a single array of values and returns the merged value. The package supports both ES modules and CommonJS:
 
 ```js
 import merge from "merge-deep-ts";
-```
 
-or
+merge([{ a: 1, o: { x: 1 } }, { b: 2, o: { y: 2 } }]); // { a: 1, b: 2, o: { x: 1, y: 2 } }
+```
 
 ```js
 const merge = require("merge-deep-ts").default;
@@ -36,14 +37,40 @@ const merge = require("merge-deep-ts").default;
 
 ## Features
 
-* Merges deeply objects
+* Merges objects deeply
 * Supports Object, Array, Map or Set merge
 * Input objects can have any circular references
 * Fast algorithm with caching
 * Strongly typed merged result with TypeScript
 * No dependencies
 * Small size
-* Works in browser and Node.js
+* Works in browser and Node.js, ES modules and CommonJS
+
+## How values are merged
+
+* **Left to right.** Arguments are merged from left to right, and later values replace earlier ones.
+* **Objects** are merged key by key, including symbol keys. Plain objects, objects without a prototype (`Object.create(null)`) and class instances are merged into a new plain object:
+  * only own properties are merged, inherited ones (e.g. class methods) aren't copied;
+  * getters are called, and their values are copied as regular properties;
+  * non-enumerable own properties are copied as enumerable ones;
+  * an own `__proto__` key (e.g. from `JSON.parse`) is copied as a regular property, it never changes prototypes.
+* **Arrays** are merged by index: `merge([[1, 2, 3], [4]])` is `[4, 2, 3]`.
+* **Maps** are merged by key, the values with the same key are merged deeply.
+* **Sets** are combined into a union, their values aren't merged.
+* **`null` and `undefined`** never replace a value: `merge([{ a: 1 }, { a: null }])` is `{ a: 1 }`. If all values are `null` or `undefined`, the last one is used.
+* **Other values replace the previous ones**: primitives, functions, `Date`, `RegExp`, typed arrays, promises, errors, subclasses of `Map` and `Set`, objects with `Symbol.toStringTag`. Values of different kinds (e.g. an object and an array) replace each other too.
+* **A non-mergeable value discards everything merged before it**: `merge([{ a: 1 }, 42, { b: 2 }])` is `{ b: 2 }`.
+* **Arguments are never mutated.** The merged objects are new, but values that come from a single argument are reused as is, without copying: in `merge([{ a: obj }, { b: 2 }])` the result's `a` is `obj` itself, and `merge([obj])` returns `obj`. Use `structuredClone` on the result if you need an independent copy.
+* **Circular references and shared objects** are preserved: the same objects are merged in the same order only once.
+* `merge([])` returns `null`. `merge` throws an error if the argument isn't an array.
+
+## TypeScript
+
+The type of the result is inferred from the types of the arguments and follows the rules above. The types work with TypeScript 4.9 and newer (tested with 4.9–7.x).
+
+* Use `as const` to get literal types (see the examples below).
+* For an array of unknown length (e.g. `Foo[]`) the result type is `Foo | null`, because the array can be empty.
+* Limitations: the type of a merged class instance includes its methods, although methods aren't copied. Built-in classes without `Symbol.toStringTag` (e.g. `Error`, `URL`) are typed as objects merged key by key, although at runtime they replace the previous values.
 
 ## Examples
 
@@ -230,20 +257,11 @@ const updatedPhone = merge([phone, phoneUpdate]);
 Runtime JS result:
 
 ```
-Map {
-  name => "iPhone",
-  model => "14 used",
-  price => {
-    value => 699,
-    currency => "USD"
-  },
-  owners => [{
-    name => "Alex",
-    age => 35
-  }, {
-    name => "John",
-    age => 42
-  }]
+Map(4) {
+  "name" => "iPhone",
+  "model" => "14 used",
+  "price" => { value: 699, currency: "USD" },
+  "owners" => [{ name: "Alex", age: 35 }, { name: "John", age: 42 }]
 }
 ```
 
@@ -263,46 +281,30 @@ Set { 1, 2, 3, 4 }
 
 ### *Circular references*
 
-```typescript
-const bookInfo = {
-    title: "Harry Potter",
-    price: 49,
-    year: 1997,
-    author: {
-        name: "Joanne Rowling",
-        books: [] // → [bookInfo]
-    }
-};
-bookInfo.author.books.push(bookInfo); // add circular reference
+```js
+const user = { name: "Alex" };
+user.self = user;
 
-const bookSale = {
-    title: "Harry Potter (sale)",
-    price: 29,
-    author: {
-        name: "J. K. Rowling"
-    }
-};
+const update = { age: 35 };
+update.self = update;
 
-const book = merge([bookInfo, bookSale]);
+const merged = merge([user, update]);
+merged.self === merged; // true
 ```
 
 Runtime JS result:
 
 ```json5
 {
-  title: "Harry Potter (sale)",
-  price: 29,
-  year: 1997,
-  author: {
-    name: "J. K. Rowling",
-    books: [/* Circular reference */]
-  }
+  name: "Alex",
+  self: [/* Circular reference → merged */],
+  age: 35
 }
 ```
 
 ### *Circular cross-references*
 
-```typescript
+```js
 // object1 = { a: 1, o2: object2 }
 // object2 = { b: 2, o1: object1 }
 const object1 = { a: 1 };
@@ -313,19 +315,27 @@ object2.o1 = object1;
 const merged = merge([object1, object2]);
 ```
 
-Runtime JS result:
+Runtime JS result: `o1` and `o2` come from a single argument each, so they're reused as is.
 
 ```json5
 {
   a: 1,
+  o2: object2, // { b: 2, o1: object1 }
   b: 2,
-  o1: {
-    a: 1,
-    o2: [/* Circular reference → merged.o2 */]
-  },
-  o2: {
-    b: 2,
-    o1: [/* Circular reference → merged.o1 */]
-  }
+  o1: object1  // { a: 1, o2: object2 }
 }
 ```
+
+## Development
+
+The project uses Node.js 24+ and Yarn (enable it with `corepack enable`).
+
+```sh
+yarn install
+yarn verify             # lint, type check, build, unit, type and smoke tests, package checks
+yarn test:types-compat  # type tests of the packed package with TypeScript 4.9–7.x (installs them with npm)
+```
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md).
