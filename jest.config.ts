@@ -3,11 +3,12 @@ import type { Config } from "jest";
 const config: Config = {
 	collectCoverage: true,
 	coverageReporters: ["text", "lcov"],
-	reporters: [["jest-junit", { outputDirectory: "reports", outputName: "report.xml" }]],
+	reporters: ["default", ["jest-junit", { outputDirectory: "reports", outputName: "report.xml" }]],
 	testEnvironment: "node",
 	maxWorkers: 1,
+	roots: ["<rootDir>/src"],
 	moduleNameMapper: {
-		"(.*)\\.js$": "$1",
+		"^(\\.{1,2}/.*)\\.js$": "$1",
 	},
 	testRegex: ".+(spec|test).[jt]s$",
 	transform: {
@@ -15,7 +16,6 @@ const config: Config = {
 			"ts-jest",
 			{
 				tsconfig: "./tsconfig.jest.json",
-				useESM: true,
 			},
 		],
 	},

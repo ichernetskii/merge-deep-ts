@@ -2,6 +2,8 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "module": "CommonJS",
+    "moduleResolution": "Bundler",
+    "rootDir": "./src",
     "outDir": "./dist/cjs"
   },
 	"include": ["./src/**/*.ts"],

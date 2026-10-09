@@ -27,7 +27,7 @@ describe("getType", () => {
 		expect(getType(false)).toEqual(MergeableType.NonMergeable);
 		expect(getType(Symbol(""))).toEqual(MergeableType.NonMergeable);
 		expect(getType(() => {})).toEqual(MergeableType.NonMergeable);
-		expect(getType(/.*/)).toEqual(MergeableType.NonMergeable);
+		expect(getType(/.*/u)).toEqual(MergeableType.NonMergeable);
 		expect(getType(new Float64Array())).toEqual(MergeableType.NonMergeable);
 		expect(getType(new Date())).toEqual(MergeableType.NonMergeable);
 	});

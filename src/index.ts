@@ -1,3 +1,4 @@
+import { type Argument, type Mergeable, MergeableType, type MergedMany, type Nullable, type WithValue } from "./types.js";
 import {
 	ERROR_NOT_ARRAY,
 	getCounter,
@@ -5,7 +6,6 @@ import {
 	isMergeable,
 	isNullable,
 } from "./utils.js";
-import { type Mergeable, MergeableType, type MergedMany, type NonMergeable, type Nullable, type WithValue } from "./types.js";
 
 /**
  * Merge objects with circular references
@@ -154,15 +154,7 @@ function mergeCircular(
  * merge([{ a: 1 }, { b: 2 }]); // { a: 1, b: 2 }
  * merge([{ a: 1 }, { a: 2 }]); // { a: 2 }
  */
-function merge<
-	T extends [...Rest], // → Tuple
-	Rest extends Params[],
-	RestArrayType extends Rest,
-	MergeableObjectType extends Record<PropertyKey, Params>,
-	MergeableMapType extends Map<Params, Params>,
-	MergeableSet extends Set<Params>,
-	Params extends [...RestArrayType] | MergeableObjectType | MergeableMapType | MergeableSet | NonMergeable<Rest> | Nullable,
->(args: T): MergedMany<T> {
+function merge<T extends [] | Argument[]>(args: T): MergedMany<T> {
 	const result: WithValue<any> = { value: undefined };
 	mergeCircular(result, args, new Map(), new WeakMap());
 	return result.value;

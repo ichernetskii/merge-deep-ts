@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars -- `actual*` values are only used in type assertions */
 import { type Equal, assert } from "../types.js";
 import { ERROR_NOT_ARRAY } from "../utils.js";
 import merge from "../index.js";
@@ -31,7 +32,7 @@ describe("TypeScript tests", () => {
 					arr: [{ x: string; y: number; }, number];
 				};
 			};
-		}
+		};
 		assert<Equal<expected3, typeof actual3>>();
 
 		const actual4 = merge([
@@ -44,7 +45,7 @@ describe("TypeScript tests", () => {
 			[{ a: string; }],
 			number,
 			number,
-		]
+		];
 		assert<Equal<expected4, typeof actual4>>();
 
 		const actual4AsConst = merge([
@@ -57,7 +58,7 @@ describe("TypeScript tests", () => {
 			[{ a: "1"; }],
 			42,
 			100,
-		]
+		];
 		assert<Equal<expected4AsConst, typeof actual4AsConst>>();
 
 		const actual5 = merge([{ a: 1 }, { b: 2, a: "w" }, { c: 3, a: true }]);

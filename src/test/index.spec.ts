@@ -1,4 +1,4 @@
-import { type MergedObject } from "../types.js";
+import type { MergedObject } from "../types.js";
 import merge from "../index.js";
 
 describe("merge-fast tests", () => {
@@ -158,8 +158,8 @@ describe("merge-fast tests", () => {
 	describe("circular references", () => {
 		describe("circular references in objects", () => {
 			describe("should merge { a: 1, o: obj1 } + { b: 2 }", () => {
-				type Obj1 = { a: number; o?: Obj1; }
-				type Obj2 = { b: number; }
+				type Obj1 = { a: number; o?: Obj1; };
+				type Obj2 = { b: number; };
 				const obj1: Obj1 = { a: 1 }; // obj1 = { a: 1, o: obj1 }
 				const obj2: Obj2 = { b: 2 }; // obj2 = { b: 2 }
 				obj1.o = obj1;
@@ -178,8 +178,8 @@ describe("merge-fast tests", () => {
 			});
 
 			describe("should merge { a: 1, o1: obj1 } + { b: 2, o2: obj2 }", () => {
-				type Obj1 = { a: number; o1?: Obj1; }
-				type Obj2 = { b: number; o2?: Obj2; }
+				type Obj1 = { a: number; o1?: Obj1; };
+				type Obj2 = { b: number; o2?: Obj2; };
 				const obj1: Obj1 = { a: 1 }; // obj1 = { a: 1, o1: obj1 }
 				const obj2: Obj2 = { b: 2 }; // obj2 = { b: 2, o2: obj2 }
 				obj1.o1 = obj1;
@@ -202,8 +202,8 @@ describe("merge-fast tests", () => {
 			});
 
 			describe("should merge { a: 1, value: { o: obj1 } } + { b: 2, value: { c: 3 } }", () => {
-				type Obj1 = { a: number; value: { o?: Obj1; }; }
-				type Obj2 = { b: number; value: { c: number; }; }
+				type Obj1 = { a: number; value: { o?: Obj1; }; };
+				type Obj2 = { b: number; value: { c: number; }; };
 				const obj1: Obj1 = { a: 1, value: {} }; // obj1 = { a: 1, value: { o: obj1 } }
 				const obj2: Obj2 = { b: 2, value: { c: 3 } }; // obj2 = { b: 2, value: { c: 3 } }
 				obj1.value.o = obj1;
@@ -223,8 +223,8 @@ describe("merge-fast tests", () => {
 			});
 
 			describe("should merge { a: 1, o1: obj1, o2: obj1 } + { b: 2 }", () => {
-				type Obj1 = { a: number; o1?: Obj1; o2?: Obj1; }
-				type Obj2 = { b: number; }
+				type Obj1 = { a: number; o1?: Obj1; o2?: Obj1; };
+				type Obj2 = { b: number; };
 				const obj1: Obj1 = { a: 1 }; // obj1 = { a: 1, o1: obj1, o2: obj1 }
 				const obj2: Obj2 = { b: 2 }; // obj2 = { b: 2 }
 				obj1.o1 = obj1;
@@ -253,8 +253,8 @@ describe("merge-fast tests", () => {
 			});
 
 			describe("should merge { a: 1, o2: obj2 } + { b: 2, o1: obj1 }", () => {
-				type Obj1 = { a: number; o2?: Obj2; }
-				type Obj2 = { b: number; o1?: Obj1; }
+				type Obj1 = { a: number; o2?: Obj2; };
+				type Obj2 = { b: number; o1?: Obj1; };
 				const obj1: Obj1 = { a: 1 }; // obj1 = { a: 1, o2: obj2 }
 				const obj2: Obj2 = { b: 2 }; // obj2 = { b: 2, o1: obj1 }
 				obj1.o2 = obj2;
@@ -288,7 +288,7 @@ describe("merge-fast tests", () => {
 				it.each([[obj1, obj2], [obj2, obj1]])("should merge { a: 1, value: { o: obj2 } } + { b: 2, value: { c: 3 } }, test: %#", (...arr) => {
 					const actual = merge(arr);
 					expect(actual).not.toBe(actual.value.o);
-					expect(obj2).toBe(actual.value?.o);
+					expect(obj2).toBe(actual.value.o);
 
 					const expected: MergedObject<Obj1, Obj2> = { a: 1, b: 2, value: { c: 3, o: { b: 2, value: { c: 3 } } } };
 					expect(actual).toEqual(expected);
@@ -329,8 +329,8 @@ describe("merge-fast tests", () => {
 			});
 
 			describe("should merge { a: 1, o: obj1 } + { b: 2, o: obj2 }", () => {
-				type Obj1 = { a: number; o?: Obj1; }
-				type Obj2 = { b: number; o?: Obj2; }
+				type Obj1 = { a: number; o?: Obj1; };
+				type Obj2 = { b: number; o?: Obj2; };
 				const obj1: Obj1 = { a: 1 }; // obj1 = { a: 1, o: obj1 }
 				const obj2: Obj2 = { b: 2 }; // obj2 = { b: 2, o: obj2 }
 
@@ -338,8 +338,8 @@ describe("merge-fast tests", () => {
 				obj2.o = obj2;
 
 				// cross references
-				type Obj3 = { a: number; o?: Obj4; }
-				type Obj4 = { b: number; o?: Obj3; }
+				type Obj3 = { a: number; o?: Obj4; };
+				type Obj4 = { b: number; o?: Obj3; };
 				const obj3: Obj3 = { a: 1 }; // obj3 = { a: 1, o: obj4 }
 				const obj4: Obj4 = { b: 2 }; // obj4 = { b: 2, o: obj3 }
 				obj3.o = obj4;
