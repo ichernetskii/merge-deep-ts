@@ -31,6 +31,12 @@ jobs:
         run: yarn run build
       - name: Unit tests ✅
         run: yarn run test
+      - name: Coveralls 📊
+        if: github.event_name == 'push' && matrix.node == 24
+        uses: coverallsapp/github-action@v2
+        with:
+          # an outage of the service shouldn't fail the build
+          fail-on-error: false
       - name: Type tests
         run: yarn run test:types
       - name: Smoke tests of the build
