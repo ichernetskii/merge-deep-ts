@@ -31,7 +31,8 @@ type IsMergeableObject<T> = T extends readonly unknown[] | MergeableMap | Mergea
 
 type OptionalKeys<T> = { [Key in keyof T]-?: T extends Record<Key, T[Key]> ? never : Key; }[keyof T];
 
-type Simplify<T> = { [Key in keyof T]: T[Key]; };
+/** Flattens an intersection into a single object type (`& {}` makes editors display the properties) */
+type Simplify<T> = { [Key in keyof T]: T[Key]; } & {};
 
 /** Result of `merge([T1, T2])` */
 export type Merged<T1, T2> =

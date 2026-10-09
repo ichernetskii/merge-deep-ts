@@ -3,6 +3,9 @@ import type { Config } from "jest";
 const config: Config = {
 	collectCoverage: true,
 	coverageReporters: ["text", "lcov"],
+	coverageThreshold: {
+		global: { branches: 95, functions: 95, lines: 95, statements: 95 },
+	},
 	reporters: ["default", ["jest-junit", { outputDirectory: "reports", outputName: "report.xml" }]],
 	testEnvironment: "node",
 	maxWorkers: 1,

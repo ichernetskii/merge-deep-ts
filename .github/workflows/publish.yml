@@ -7,26 +7,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v7
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v7
         with:
-          node-version: "20.x"
+          node-version: "24.x"
           registry-url: "https://registry.npmjs.org"
       - name: Install dependencies and build 🔧
-        run: corepack enable && yarn set version 4.1.1 && yarn install --immutable && yarn run build
+        run: npm install --global corepack@latest && corepack enable && yarn install --immutable && yarn run build
+      - name: Lint 🔍
+        run: yarn run lint && yarn run typecheck
       - name: Setup Testspace 🚀
         uses: testspace-com/setup-testspace@v1
         with:
           domain: ${{ github.repository_owner }}
       - name: Run tests ✅
-        run: yarn run test
+        run: yarn run test && yarn run test:types && yarn run test:smoke
       - name: Push result to Testspace server
         run: |
           testspace ./reports/report.xml
         if: always()
       - name: Coveralls GitHub Action 📊
         uses: coverallsapp/github-action@v2
+      - name: Check package 📦
+        run: yarn run lint:package
       - name: Publish package on NPM 📦
         run: echo "npmAuthToken:" "\${NODE_AUTH_TOKEN}" >> ./.yarnrc.yml && yarn npm publish
         env:

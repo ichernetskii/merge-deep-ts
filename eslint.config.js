@@ -1,10 +1,17 @@
 import { defineConfig, globalIgnores } from "eslint/config";
+import globals from "globals";
+import js from "@eslint/js";
 import love from "eslint-config-love";
 import stylistic from "@stylistic/eslint-plugin";
 import tseslint from "typescript-eslint";
 
 export default defineConfig(
 	globalIgnores(["dist/", "coverage/", "reports/", ".yarn/", ".pnp.*"]),
+	{
+		files: ["**/*.{js,mjs,cjs}"],
+		extends: [js.configs.recommended],
+		languageOptions: { globals: globals.node },
+	},
 	{
 		files: ["**/*.ts"],
 		extends: [tseslint.configs.recommended, love],
@@ -15,7 +22,7 @@ export default defineConfig(
 			},
 		},
 		rules: {
-			"@typescript-eslint/no-unused-vars": ["error", { args: "all", caughtErrors: "all" }],
+			"@typescript-eslint/no-unused-vars": ["error", { args: "all", argsIgnorePattern: "^_", caughtErrors: "all" }],
 			"@typescript-eslint/switch-exhaustiveness-check": "warn",
 			"@typescript-eslint/strict-boolean-expressions": "off",
 			"@typescript-eslint/no-empty-function": "off",
@@ -40,7 +47,7 @@ export default defineConfig(
 			"@typescript-eslint/class-methods-use-this": "off",
 			"@typescript-eslint/no-explicit-any": "off",
 			"@typescript-eslint/no-unsafe-type-assertion": "off",
-			"@typescript-eslint/no-unnecessary-type-parameters": "off",
+			"@typescript-eslint/explicit-function-return-type": "off",
 		},
 	},
 	{
