@@ -2,6 +2,10 @@ name: Publish to NPM
 on:
   release:
     types: [published]
+permissions:
+  contents: read
+  # npm trusted publishing (OIDC) and provenance
+  id-token: write
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -12,7 +16,7 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version: "24.x"
-          registry-url: "https://registry.npmjs.org"
+          package-manager-cache: false
       - name: Install dependencies and build 🔧
         run: npm install --global corepack@latest && corepack enable && yarn install --immutable && yarn run build
       - name: Lint 🔍
@@ -31,7 +35,6 @@ jobs:
         uses: coverallsapp/github-action@v2
       - name: Check package 📦
         run: yarn run lint:package
+      # No token: npm trusted publishing authenticates this workflow, see https://docs.npmjs.com/trusted-publishers
       - name: Publish package on NPM 📦
-        run: echo "npmAuthToken:" "\${NODE_AUTH_TOKEN}" >> ./.yarnrc.yml && yarn npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: yarn npm publish --provenance
