@@ -5,7 +5,7 @@
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/ichernetskii/merge-deep-ts/ci.yml)
 <a href="https://ichernetskii.testspace.com/spaces/220047">![Testspace pass ratio](https://img.shields.io/testspace/pass-ratio/ichernetskii/ichernetskii:merge-deep-ts/220047?label=passed%20tests)</a>
 [![Coverage Status](https://coveralls.io/repos/github/ichernetskii/merge-deep-ts/badge.svg)](https://coveralls.io/github/ichernetskii/merge-deep-ts)
-<a href="https://github.com/ichernetskii/merge-deep-ts/blob/master/LICENSE">[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://img.shields.io/github/license/ichernetskii/merge-deep-ts)</a>
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/ichernetskii/merge-deep-ts/blob/master/LICENSE)
 
 Deep fast merge JavaScript objects with circular references handling and TypeScript support.
 
@@ -233,16 +233,16 @@ Runtime JS result:
 ### *Maps*
 
 ```typescript
-const phone = new Map([
+const phone = new Map<string, unknown>([
     ["name", "iPhone"],
     ["model", "14"],
     ["price", { value: 999, currency: "USD" }],
-	["owners", [
-            { name: "Alex", age: 30 }
+    ["owners", [
+        { name: "Alex", age: 30 }
     ]]
 ]);
 
-const phoneUpdate = new Map([
+const phoneUpdate = new Map<string, unknown>([
     ["model", "14 used"],
     ["price", { value: 699, currency: "USD" }],
     ["owners", [
