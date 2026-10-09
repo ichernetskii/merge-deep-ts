@@ -37,3 +37,26 @@ jobs:
         run: yarn run test:smoke
       - name: Package checks (publint, attw) 📦
         run: yarn run lint:package
+  smoke:
+    name: Smoke tests of the build (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [18, 20, 22]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      # the build runs on the same Node version as in the verify job
+      - name: Setup Node 24
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - name: Install dependencies and build 🔧
+        run: npm install --global corepack@latest && corepack enable && yarn install --immutable && yarn run build
+      - name: Setup Node ${{ matrix.node }}
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Smoke tests of the build
+        run: node --test test/smoke/esm.test.mjs test/smoke/cjs.test.cjs
