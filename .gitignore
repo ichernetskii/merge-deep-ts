@@ -3,8 +3,6 @@
 /.idea
 /dist
 /.yarn
-.yarnrc.yml
-.pnp.*
 yarn-error.log
 /coverage
 /reports

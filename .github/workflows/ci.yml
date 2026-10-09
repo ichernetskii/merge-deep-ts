@@ -20,8 +20,6 @@ jobs:
         uses: actions/setup-node@v7
         with:
           node-version: ${{ matrix.node }}
-          # Yarn PnP fails on Node 24.15.0 and 26.0.0 (fixed in 24.16 and 26.1), don't use stale cached versions
-          check-latest: true
       # Node 25+ doesn't ship Corepack
       - name: Install dependencies 🔧
         run: npm install --global corepack@latest && corepack enable && yarn install --immutable
