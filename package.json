@@ -83,7 +83,15 @@
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.71.1"
   },
-  "packageManager": "yarn@4.12.0",
+  "dependenciesMeta": {
+    "@parcel/watcher": {
+      "built": false
+    },
+    "unrs-resolver": {
+      "built": false
+    }
+  },
+  "packageManager": "yarn@4.18.1",
   "engines": {
     "node": ">=24"
   }

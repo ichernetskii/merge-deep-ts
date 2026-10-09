@@ -2,7 +2,7 @@
 # Manual changes might be lost - proceed with caution!
 
 __metadata:
-  version: 8
+  version: 10
   cacheKey: 10c0
 
 "@andrewbranch/untar.js@npm:^1.0.3":
@@ -4369,6 +4369,11 @@ __metadata:
     ts-jest: "npm:^29.4.14"
     typescript: "npm:^6.0.3"
     typescript-eslint: "npm:^8.71.1"
+  dependenciesMeta:
+    "@parcel/watcher":
+      built: false
+    unrs-resolver:
+      built: false
   languageName: unknown
   linkType: soft
 
