@@ -36,5 +36,7 @@ jobs:
       - name: Check package 📦
         run: yarn run lint:package
       # No token: npm trusted publishing authenticates this workflow, see https://docs.npmjs.com/trusted-publishers
+      # npm, not Yarn: Yarn waits for the Sigstore transparency log for 5 seconds only, then it retries
+      # and fails with "an equivalent entry already exists" (409) when the log is slow
       - name: Publish package on NPM 📦
-        run: yarn npm publish --provenance
+        run: npm publish --provenance

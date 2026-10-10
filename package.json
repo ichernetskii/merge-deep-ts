@@ -31,7 +31,8 @@
   },
   "type": "module",
   "files": [
-    "dist/**/*"
+    "dist/**/*",
+    "CHANGELOG.md"
   ],
   "sideEffects": false,
   "exports": {
