@@ -1,7 +1,7 @@
 # [Merge-Deep-TS](https://www.npmjs.com/package/merge-deep-ts)
 
 <a href="https://www.npmjs.com/package/merge-deep-ts">![GitHub package.json version](https://img.shields.io/github/package-json/v/ichernetskii/merge-deep-ts?logo=npm)</a>
-<a href="https://bundlephobia.com/package/merge-deep-ts@latest">![npm bundle size](https://img.shields.io/bundlephobia/minzip/merge-deep-ts)</a>
+<a href="https://bundlejs.com/?q=merge-deep-ts">![Minzipped size](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fdeno.bundlejs.com%2F%3Fq%3Dmerge-deep-ts&query=%24.size.compressedSize&label=minzipped%20size)</a>
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/ichernetskii/merge-deep-ts/ci.yml)
 <a href="https://ichernetskii.testspace.com/spaces/220047">![Testspace pass ratio](https://img.shields.io/testspace/pass-ratio/ichernetskii/ichernetskii:merge-deep-ts/220047?label=passed%20tests)</a>
 [![Coverage Status](https://coveralls.io/repos/github/ichernetskii/merge-deep-ts/badge.svg)](https://coveralls.io/github/ichernetskii/merge-deep-ts)
